@@ -50,12 +50,12 @@ const menu: {
 ]
 export default () => {
   const [collapsed, setCollapsed] = React.useState(false) // 改写成Hooks的写法。useState：组件状态管理的钩子      collapsed：管理组件的状态  setCollapsed：更新collapsed的方法，方法名不可更改！  false:初始的collapsed，可以是任意的数据类型,这里是布尔型
-  const [page, setPage] = React.useState('4') // 声明一个新的叫做 “page” 的 state 变量,在这里，useState 就是一个 Hook
+  const [page, setPage] = React.useState('4') // useState 就是一个 Hook。这里后台管理界面打开的是第5个模块（票房统计）
 
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        {/*使用自定义触发器，可以设置 trigger={null} 来隐藏默认设定*/}
+        {/*使用自定义触发器，可以设置 trigger={null} 来隐藏默认设定，设置为 null 时隐藏 trigger。collapsible：是否可收起。collapsed：当前收起状态*/}
         <div className="logo">
           <span
             style={{
@@ -74,6 +74,7 @@ export default () => {
         </div>
 
         <Menu theme="dark" mode="inline" onSelect={({ key }) => setPage(key)} defaultSelectedKeys={[page]}>
+          {/* mode="inline" :菜单类型，现在支持垂直、水平、和内嵌模式三种,现在是内嵌模式。onSelect：被选中时调用，key是item的唯一标志。defaultSelectedKeys:初始选中的菜单项 key 数组 */}
           {menu.map(({ name, icon }, index) => (
             <Menu.Item key={String(index)} icon={icon}>
               {name}

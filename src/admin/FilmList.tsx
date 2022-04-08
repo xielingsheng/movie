@@ -209,8 +209,8 @@ const FilmList: React.FC<IProp> = () => {
                       <Tag
                         icon={<UserOutlined />}
                         key={index}
-                        onClick={() => setUrl(headimg)}
-                        style={{ cursor: 'pointer' }}
+                        onClick={() => setUrl(headimg)} //  鼠标点击查看演员头像
+                        style={{ cursor: 'pointer' }} //  鼠标移上去变捉手
                       >
                         {name}
                       </Tag>
@@ -247,6 +247,7 @@ const FilmList: React.FC<IProp> = () => {
                       编辑
                     </Button>
                     <Popconfirm placement="topRight" title="是否确定下架" onConfirm={() => del('fid=' + fid)}>
+                      // onConfirm是点击确认的回调（确认之后执行什么） placement是气泡框位置
                       <Button type="primary" danger size="small">
                         下架
                       </Button>

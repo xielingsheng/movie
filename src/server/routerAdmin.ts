@@ -2,6 +2,7 @@ import * as KoaRouter from 'koa-router' //  引入koa-router
 import { dosql, getKey, recvData } from './utils'
 export const koaRouterAdmin = new KoaRouter()
 koaRouterAdmin.prefix('/admin_api') // koaRouter的所有路径都会自动被添加该(/api)路由前缀。
+
 koaRouterAdmin.get('/check', async ctx => {
   ctx.body = 'hello'
 })
@@ -20,6 +21,7 @@ koaRouterAdmin.post('/film', async ctx => {
   )
   ctx.body = '成功'
 })
+
 koaRouterAdmin.delete('/film', async ctx => {
   const { fid } = ctx.query
   const result = await dosql(`UPDATE film SET isDel = 1 WHERE fid = ?`, [String(fid)])
@@ -94,7 +96,7 @@ koaRouterAdmin.get('/hall', async ctx => {
   result.forEach(({ cid, cName, hid, hName, capacity, price }) => {
     //  把返回的结果全部遍历一遍
     if (!cidHash.has(cid)) {
-      //  如果cidhash中有cid记录，则从cidhash中读取内容
+      //  cidhash中是否有cid记录，没有则替换动态数组中指定索引的元素。
       cidHash.set(cid, { cid, cName, halls: [] })
     }
     cidHash.get(cid)?.halls.push({ hid, hName, capacity, price }) // 否则往halls空数组最后添加内容
@@ -121,7 +123,7 @@ koaRouterAdmin.get('/filmBoxofficeTop10', async ctx => {
 koaRouterAdmin.post('/play', async ctx => {
   const { date, cid } = ctx.query
   const list = await recvData(ctx)
-  const updateArr = list.filter(({ pid }) => pid > 0)
+  const updateArr = list.filter(({ pid }) => pid > 0) //
   const insertArr = list.filter(({ pid }) => pid < 0)
   await dosql('DELETE FROM play WHERE date=? and hid in (SELECT hid FROM `hall` WHERE cid=?)', [date, cid])
   if (updateArr.length) {
@@ -263,37 +265,6 @@ koaRouterAdmin.get('/autoPlay', async ctx => {
   // const halls = await dosql('SELECT hid,capacity,price FROM `hall` WHERE cid=?', [String(cid)])
 })
 
-koaRouterAdmin.get('/statistics', async ctx => {
-  ctx.body = {
-    cinema: (await dosql('SELECT COUNT(*) as count FROM `cinema`', []))[0].count,
-    account: (await dosql('SELECT COUNT(*) as count FROM `account`', []))[0].count,
-    film: (await dosql('SELECT COUNT(*) as count FROM `film`', []))[0].count,
-    orderlist: (await dosql('SELECT COUNT(*) as count FROM `orderlist`', []))[0].count,
-    play: (await dosql('SELECT COUNT(*) as count FROM `play`', []))[0].count,
-  }
-})
-// const autoPlay = (filmInfoList: IAutoFilmInfo[], freeTime: number, duration = 960) => {
-//   const result: IAutoFilmInfo[][] = []
-//   const sum: IAutoFilmInfo[] = []
-//   let usedTime = 0
-//   const dfs = (filmInfo: IAutoFilmInfo) => {
-//     sum.push(filmInfo)
-//     usedTime += filmInfo.filmlong
-//     //  console.log(usedTime)
-//     if (usedTime > duration) {
-//       result.push([...sum].slice(0, sum.length - 1))
-//     } else {
-//       usedTime += freeTime
-//       filmInfoList.forEach(dfs)
-//       usedTime -= freeTime
-//     }
-//     usedTime -= filmInfo.filmlong
-//     sum.pop()
-//   }
-//   filmInfoList.forEach(dfs)
-//   return result
-// }
-
 const autoPlay = (filmInfoList: IAutoFilmInfo['filmlong'][], duration = 960) => {
   const lastFilmLong = filmInfoList.pop() || 0
   const result: number[][] = []
@@ -325,3 +296,13 @@ const autoPlay = (filmInfoList: IAutoFilmInfo['filmlong'][], duration = 960) => 
   // console.log(result.map(arr => arr.reduce((a, b, i) => a + b * (filmInfoList[i] || lastFilmLong), 0)))
   return result
 }
+
+koaRouterAdmin.get('/statistics', async ctx => {
+  ctx.body = {
+    cinema: (await dosql('SELECT COUNT(*) as count FROM `cinema`', []))[0].count,
+    account: (await dosql('SELECT COUNT(*) as count FROM `account`', []))[0].count,
+    film: (await dosql('SELECT COUNT(*) as count FROM `film`', []))[0].count,
+    orderlist: (await dosql('SELECT COUNT(*) as count FROM `orderlist`', []))[0].count,
+    play: (await dosql('SELECT COUNT(*) as count FROM `play`', []))[0].count,
+  }
+})

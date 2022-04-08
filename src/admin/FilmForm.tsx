@@ -15,7 +15,7 @@ const FilmForm: React.FC<IProp> = ({ filmInfo, setFilmInfo, refresh }) => {
     manual: true,
     onSuccess() {
       message.success('保存成功')
-      refresh()
+      refresh() //  保存成功后刷新页面
       setFilmInfo(null)
     },
   })
@@ -35,16 +35,16 @@ const FilmForm: React.FC<IProp> = ({ filmInfo, setFilmInfo, refresh }) => {
     <Modal
       title={`${filmInfo?.fid ? '编辑' : '上架'}电影`}
       visible={Boolean(filmInfo)}
-      onCancel={() => setFilmInfo(null)}
-      onOk={() => form.submit()}
+      onCancel={() => setFilmInfo(null)} //  点击取消按钮电影信息变为空的，然后对话框关闭
+      onOk={() => form.submit()} //  点击确定按钮提交填好的信息
     >
       <Form
         form={form}
         onFinish={obj => {
           obj.score *= 20
           obj.type = obj.type.join(',')
-          obj.releaseTime = obj.releaseTime.format('YYYY-MM-DD hh-mm-ss')
-          obj.price = Math.round(100 * obj.price)
+          obj.releaseTime = obj.releaseTime.format('YYYY-MM-DD hh-mm-ss') //  日期格式化
+          obj.price = Math.round(100 * obj.price) // round方法：他表示“四舍五入”，算法为Math.round(x+0.5),即将原来的数字加上0.5后再向下取整，
           run(obj)
         }}
       >

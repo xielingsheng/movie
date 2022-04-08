@@ -1,7 +1,8 @@
-import axios from 'axios'
+import axios from 'axios' //  axios主要是用于向后台发起请求的。前端项目中引入axios
 type IAjax<T> = (url: string) => (body?: T, other?: string) => Promise<any>
 
 export const ajax: {
+  //  封装了请求方法
   Catch: (e: any) => void
   api: string
   get: IAjax<string>
@@ -50,11 +51,3 @@ export const ajax: {
       )
   },
 }
-// export const ajax: IAjax = (method, url) => body =>
-//   new Promise(resolve =>
-//     axios[method]('/admin_api' + url, body)
-//       .then(({ data }) => resolve(data))
-//       .catch(e => {
-//         location.href = 'login.html'
-//       })
-//   )
